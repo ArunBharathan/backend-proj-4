@@ -1,6 +1,6 @@
-import { Schema, Model, Types, Mongoose } from "mongoose";
+import mongoose from "mongoose";
 
-const exerciseSchema = new Schema({
+const exerciseSchema = new mongoose.Schema({
   description: {
     type: String,
     required: true,
@@ -10,11 +10,11 @@ const exerciseSchema = new Schema({
     required: true,
   },
   userId: {
-    type: Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     required: true,
   },
   date: {
-    type: String,
+    type: Date,
   },
   username: {
     type: String,
@@ -22,6 +22,6 @@ const exerciseSchema = new Schema({
   },
 });
 
-const exerciseModel = Mongoose.model("Exercise", exerciseSchema);
+const exerciseModel = mongoose.model("Exercise", exerciseSchema);
 
 export { exerciseModel };

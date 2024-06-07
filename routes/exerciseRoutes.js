@@ -1,30 +1,43 @@
 import { Router } from "express";
-import { exerciseModel } from "../models/exerciseModel";
-import { userModel } from "../models/userModel";
-import { logsModel } from "../models/logsExercise";
-import { userValidation } from "../middleware/userValidation";
+import { exerciseModel } from "../models/exerciseModel.js";
+import { userModel } from "../models/userModel.js";
+import { logsModel } from "../models/logsExercise.js";
+import { userValidation } from "../middleware/userValidation.js";
+import mongoose from "mongoose";
 
 const router = Router();
 
-router.post("/", userValidation, async (req, res) => {
+const ObjectId = mongoose.Types.ObjectId;
+
+router.post("/", async (req, res) => {
   const { description, duration, date } = req.body;
-  const { _id: userId } = req.params;
-  const user = await userModel.findNyId(userId);
+  const { _id: userId } = req.user;
+  console.log("param and body", req.params, req.body, "-", req?.user);
+  const user = await userModel.findById(ObjectId(userId));
+  console.log("user", user);
   const exercise = await new exerciseModel({
     description,
     duration: parseInt(duration),
-    date,
+    date: date ? new Date(date) : new Date(),
     userId: user._id,
     username: user.username,
   }).save();
+  console.log("exercise", exercise);
   const log = await new logsModel({
     userId: user._id,
     exerciseId: exercise._id,
+    username: user.username,
   }).save();
+  console.log("log", log);
   if (exercise) {
     res.status(201).json({
       username: user?.username,
-      ...exercise,
+      description: exercise?.description,
+      duration: exercise?.duration,
+      date: exercise?.date,
+      _id: user?._id,
     });
   }
 });
+
+export default router;

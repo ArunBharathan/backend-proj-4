@@ -1,14 +1,17 @@
-import { Model, Schema, Types } from "mongoose";
+import mongoose from "mongoose";
 
-const logsSchema = new Schema({
+const logsSchema = new mongoose.Schema({
   userId: {
-    type: Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
   },
   exerciseId: {
-    type: Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
+  },
+  username: {
+    type: String,
   },
 });
 
-const logsModel = Model("Logs", logsSchema);
+const logsModel = mongoose.model("Logs", logsSchema);
 
 export { logsModel };
