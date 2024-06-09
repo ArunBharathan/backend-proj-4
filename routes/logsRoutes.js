@@ -27,9 +27,6 @@ router.get("/users/:_id/logs", async (req, res) => {
     },
   ];
 
-  if (limit) {
-    aggregatePipeline.push({ $limit: parseInt(limit) });
-  }
   if (from || to) {
     const dateFilter = {};
     if (from) {
@@ -43,6 +40,10 @@ router.get("/users/:_id/logs", async (req, res) => {
         "userExercises.date": dateFilter,
       },
     });
+  }
+
+  if (limit) {
+    aggregatePipeline.push({ $limit: parseInt(limit) });
   }
   console.log("aggregatePipeline", JSON.stringify(aggregatePipeline));
   aggregatePipeline.push({
