@@ -31,11 +31,11 @@ router.post("/", async (req, res) => {
   console.log("log", log);
   if (exercise) {
     res.status(201).json({
+      _id: user?._id,
       username: user?.username,
       description: exercise?.description,
       duration: exercise?.duration,
-      date: exercise?.date,
-      _id: user?._id,
+      date: new Date(exercise?.date).toDateString(),
     });
   }
 });

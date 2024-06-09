@@ -33,10 +33,10 @@ router.get("/users/:_id/logs", async (req, res) => {
   if (from || to) {
     const dateFilter = {};
     if (from) {
-      dateFilter.$gte = new Date(from).toDateString();
+      dateFilter.$gte = new Date(from);
     }
     if (to) {
-      dateFilter.$lte = new Date(to).toDateString();
+      dateFilter.$lte = new Date(to);
     }
     aggregatePipeline.push({
       $match: {
@@ -50,7 +50,7 @@ router.get("/users/:_id/logs", async (req, res) => {
       _id: "$userId",
       username: { $first: "$username" },
       count: { $sum: 1 },
-      logs: {
+      log: {
         $push: {
           description: "$userExercises.description",
           duration: "$userExercises.duration",
@@ -61,10 +61,23 @@ router.get("/users/:_id/logs", async (req, res) => {
   });
 
   const userLogs = await logsModel.aggregate(aggregatePipeline);
-  console.log("userLogs", userLogs);
-  [{ $limit: 0 }];
+  // console.log("userLogs", JSON.stringify(userLogs));
+  let formatedLogs = userLogs[0] || {
+    _id: _id,
+    username: req.user?.username,
+    count: 0,
+    log: [],
+  };
+  formatedLogs.log =
+    formatedLogs?.log?.length > 0
+      ? formatedLogs?.log?.map((l) => ({
+          ...l,
+          date: new Date(l?.date).toDateString(),
+        }))
+      : [];
+  console.log("***", JSON.stringify(formatedLogs));
   // res.send("logs");
-  res.json(userLogs);
+  res.json(formatedLogs);
 });
 
 export default router;
